@@ -7,8 +7,11 @@ use Ubiquity\cache\ClassUtils;
 use Ubiquity\contents\validation\ValidatorsManager;
 use Ubiquity\controllers\admin\popo\MaintenanceMode;
 use Ubiquity\controllers\Startup;
+use Ubiquity\db\providers\pdo\PDOWrapper;
 use Ubiquity\db\reverse\DbGenerator;
 use Ubiquity\exceptions\UbiquityException;
+use Ubiquity\orm\creator\database\DbModelsCreator;
+use Ubiquity\orm\DAO;
 use Ubiquity\orm\parser\ModelParser;
 use Ubiquity\orm\parser\Reflexion;
 use Ubiquity\orm\reverse\DatabaseReversor;
@@ -29,13 +32,28 @@ class AdminCacheManager extends CacheManager{
 
 	public static function _generateSQL(){
 		$config = Startup::getConfig();
-		$models = self::getModels($config);
-		$meta = include ('C:\Users\Guillaume\Downloads\grintoAdmin\app\cache\grinto\models\User.cache.php');
-		$table = new TableReversor($models);
-		$table->init($meta);
-		$generator = new DbGenerator();
-		$table->generateSQL($generator);
-		var_dump($generator->getSqlScript());
+		$sqlPath = \dirname(__FILE__,2). \DS . 'sql.sql';
+		if(\file_exists($sqlPath)){
+			$query = trim(file_get_contents($sqlPath), "\xEF\xBB\xBF");
+			$pdo = new PDOWrapper();
+			$dsn = 'mysql:dbname='.$config['database']['dbName'].';host='.$config['database']['serverName'];
+			$dbInstance = new \PDO($dsn, $config['database']['user'], $config['database']['password']);
+			$pdo->setDbInstance($dbInstance);
+			try{
+				$pdo->execute($query);
+				//\unlink($sqlPath);
+			}
+			catch (\Exception $exception){
+				return $exception;
+			}
+		}
+	}
+
+	public static function _generateModel($singleTable = null) {
+		$config = Startup::getConfig();
+		\ob_start();
+		(new DbModelsCreator())->create($config, false, $singleTable, 'default');
+		\ob_get_clean();
 	}
 
 	public static function _generateCache($type){
