@@ -1,6 +1,11 @@
 <?php
 namespace grinto\models;
 
+use Ubiquity\attributes\items\Id;
+use Ubiquity\attributes\items\Table;
+use Ubiquity\attributes\items\Column;
+use Ubiquity\attributes\items\Validator;
+
 #[Table(name: "user")]
 class User{
 
