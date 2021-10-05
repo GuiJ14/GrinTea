@@ -1,6 +1,9 @@
 {
   "name": "grinto/crispy-bassoon",
   "type": "extension",
+  "keywords": [
+    "php"
+  ],
   "require": {
     "php": ">=8.0",
   },
