@@ -1,0 +1,16 @@
+{
+  "name": "grinto/crispy-bassoon",
+  "type": "extension",
+  "keywords": [
+    "php",
+  ],
+  "require": {
+    "php": ">=8.0",
+  },
+  "license": "Apache-2.0",
+  "autoload": {
+    "psr-4": {
+      "Grinto\\": "src/"
+    }
+  }
+}
