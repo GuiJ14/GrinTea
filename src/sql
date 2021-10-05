@@ -1,1 +1,0 @@
-CREATE TABLE `test`.`user` ( `id` VARCHAR(511) NOT NULL , `mail` VARCHAR(255) NOT NULL , `pass` VARCHAR(511) NOT NULL , `role` ENUM('user','superuser','admin') NOT NULL );

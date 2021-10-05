@@ -1,6 +1,6 @@
 <?php
 
-namespace Grinto\Index;
+namespace grinto;
 
 $sql = file_get_contents('sql');
 if(isset($sql)){
