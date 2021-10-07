@@ -1,22 +1,18 @@
 <?php
 
-namespace grinto;
+namespace grintea;
 
-use grinto\DOMGenerator\AdminManagerDOMLoader;
+use grintea\DOMGenerator\AdminManagerDOMLoader;
+use Ubiquity\attributes\AttributesEngine;
 use Ubiquity\cache\traits\ModelsCacheTrait;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\controllers\Startup;
 use Ubiquity\db\providers\pdo\PDOWrapper;
+use Ubiquity\orm\creator\database\DbModelsCreator;
+use Ubiquity\orm\DAO;
 use Ubiquity\utils\base\UFileSystem;
 
-class AdminManager extends CacheManager {
-    use ModelsCacheTrait;
-
-    public static function _getFiles(&$config, $type, $silent = false) {
-        $typeNS = $config['mvcNS'][$type];
-        $typeDir = \dirname(__FILE__) .\DS . \str_replace("\\", \DS, $typeNS);
-        return UFileSystem::glob_recursive($typeDir . '/*.php');
-    }
+class AdminManager {
 
     public static function _createDB(){
         $config = Startup::getConfig();
@@ -30,20 +26,22 @@ class AdminManager extends CacheManager {
                 $dbInstance = new \PDO($dsn, $config['database']['user'], $config['database']['password']);
                 $pdo->setDbInstance($dbInstance);
                 $pdo->execute($query);
-                //\unlink($sqlPath);
             }
             catch (\Exception $exception){
                 return $exception;
             }
         }
-        else{
-            echo 'ok';
-        }
     }
 
-    public static function _createCache($type = 'Models'){
+    public static function _createModels(){
+    	$config = Startup::getConfig();
+		CacheManager::start($config);
+		(new DbModelsCreator())->create($config, false);
+	}
+
+    public static function _createCache(){
         $config = Startup::getConfig();
-        self::initModelsCache($config, false, true);
+        CacheManager::initModelsCache($config, false, true);
         /*
         switch ($type) {
             case "Models":

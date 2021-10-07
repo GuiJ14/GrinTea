@@ -1,6 +1,6 @@
 <?php
 
-namespace grinto\controllers;
+namespace grintea\controllers;
 
 use Ajax\JsUtils;
 use Ajax\php\symfony\Jquery_;
@@ -28,29 +28,33 @@ use Ubiquity\cache\traits\ModelsCacheTrait;
 use Ubiquity\controllers\semantic\InsertJqueryTrait;
 use grinto\DOMGenerator\AdminManagerDOMLoader;
 use Ubiquity\utils\http\URequest;
-use grinto\AdminManager;
+use grintea\AdminManager;
 
 /**
  * Controller AdminController
  */
 class AdminController extends ControllerBase {
 
-    protected $headerView = "@grinto/parts/header.html";
-    protected $footerView = "@grinto/parts/footer.html";
+    protected $headerView = "@grintea/parts/header.html";
+    protected $footerView = "@grintea/parts/footer.html";
 
 	public function initialize() {
-        Startup::$templateEngine->addPath('vendor/grinto/admin/src/views','grinto');
+        Startup::$templateEngine->addPath('vendor/grinto/grintea/src/views','grintea');
         parent::initialize();
     }
 
     public function index(){
         $this->DOMLoader->firstLaunch($this->jquery);
-        $this->jquery->renderView('@grinto/index.html');
+        $this->jquery->renderView('@grintea/index.html');
     }
 
     public function createDB(){
 	    AdminManager::_createDB();
     }
+
+    public function createModels(){
+		AdminManager::_createModels();
+	}
 
     public function createCache(){
         AdminManager::_createCache();
