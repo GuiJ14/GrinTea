@@ -41,6 +41,6 @@ class AdminCacheManager{
 
 	public static function _createCache(){
 		$config = Startup::getConfig();
-		var_dump(CacheManager::initModelsCache($config,false,true));
+		CacheManager::initModelsCache($config,false,true);
 	}
 }
