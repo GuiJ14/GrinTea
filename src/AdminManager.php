@@ -42,14 +42,5 @@ class AdminManager {
     public static function _createCache(){
         $config = Startup::getConfig();
         CacheManager::initModelsCache($config, false, true);
-        /*
-        switch ($type) {
-            case "Models":
-                self::initModelsCache($config, false, true);
-                break;
-            case "Controllers":
-                self::initCache($config, "controllers");
-                break;
-        }*/
     }
 }
