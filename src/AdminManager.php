@@ -14,23 +14,31 @@ use Ubiquity\utils\base\UFileSystem;
 
 class AdminManager {
 
+	public static function _initConfig(){
+		self::_createDB();
+		self::_createModels();
+		self::_createCache();
+	}
+
+	private static function getFile(string $filePath){
+		return trim(file_get_contents($filePath), "\xEF\xBB\xBF");
+	}
+
     public static function _createDB(){
         $config = Startup::getConfig();
         $sqlFilename = 'query';
         $sqlFilePath = dirname(__FILE__,1). \DS. $sqlFilename . '.sql';
-        if(\file_exists($sqlFilePath)){
-            $query = trim(file_get_contents($sqlFilePath), "\xEF\xBB\xBF");
-            try{
-                $pdo = new PDOWrapper();
-                $dsn = 'mysql:dbname='.$config['database']['dbName'].';host='.$config['database']['serverName'];
-                $dbInstance = new \PDO($dsn, $config['database']['user'], $config['database']['password']);
-                $pdo->setDbInstance($dbInstance);
-                $pdo->execute($query);
-            }
-            catch (\Exception $exception){
-                return $exception;
-            }
-        }
+        $query = self::getFile($sqlFilePath);
+		try{
+			$pdo = new PDOWrapper();
+			$dsn = 'mysql:dbname='.$config['database']['dbName'].';host='.$config['database']['serverName'];
+			$dbInstance = new \PDO($dsn, $config['database']['user'], $config['database']['password']);
+			$pdo->setDbInstance($dbInstance);
+			$pdo->execute($query);
+		}
+		catch (\Exception $exception){
+			return $exception;
+		}
     }
 
     public static function _createModels(){

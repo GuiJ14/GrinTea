@@ -5,8 +5,10 @@ namespace grintea\controllers;
 use Ajax\JsUtils;
 use Ajax\php\symfony\Jquery_;
 use Ajax\php\symfony\JquerySemantic;
+use Ubiquity\assets\AssetsManager;
 use Ubiquity\attributes\items\di\Autowired;
 use Ubiquity\attributes\items\router\Get;
+use Ubiquity\attributes\items\router\Post;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\cache\ClassUtils;
 use Ubiquity\contents\validation\ValidatorsManager;
@@ -29,35 +31,35 @@ use Ubiquity\controllers\semantic\InsertJqueryTrait;
 use grinto\DOMGenerator\AdminManagerDOMLoader;
 use Ubiquity\utils\http\URequest;
 use grintea\AdminManager;
+use grintea\controllers\traits\UserTrait;
 
 /**
  * Controller AdminController
  */
 class AdminController extends ControllerBase {
+	use UserTrait;
 
     protected $headerView = "@grintea/parts/header.html";
     protected $footerView = "@grintea/parts/footer.html";
 
 	public function initialize() {
         Startup::$templateEngine->addPath('vendor/grinto/grintea/src/views','grintea');
+        $config = Startup::getConfig();
         parent::initialize();
     }
 
     public function index(){
-        $this->DOMLoader->firstLaunch($this->jquery);
+        $this->loader->getUILoader('Admin')->firstLaunch($this->jquery);
         $this->jquery->renderView('@grintea/index.html');
     }
 
-    public function createDB(){
-	    AdminManager::_createDB();
+    public function initConfig(){
+	    AdminManager::_initConfig();
     }
 
-    public function createModels(){
-		AdminManager::_createModels();
+
+    public function createUser() {
+		$this->createUser($this->loader->getDAOLoader('User'));
 	}
-
-    public function createCache(){
-        AdminManager::_createCache();
-    }
 
 }

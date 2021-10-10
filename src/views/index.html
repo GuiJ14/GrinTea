@@ -1,7 +1,33 @@
-<div>
-    {{ q['createDB'] | raw }}
-    {{ q['createModels'] | raw}}
-    {{ q['cacheModels'] | raw }}
+<div id="container">
+    <h1>Installation de GrinTea</h1>
+    <div class="ui ordered steps">
+        <div class="completed step">
+            <div class="content">
+                <div class="title">Installation</div>
+            </div>
+        </div>
+        <div class="disabled step">
+            <div class="content">
+                <div class="title">Création du compte</div>
+            </div>
+        </div>
+        <div class="disabled step">
+            <div class="content">
+                <div class="title">Configuration</div>
+            </div>
+        </div>
+    </div>
+    <div id="stepper" step="3">
+        <div class="stepper_content" step="1">
+            {{ q['initConfig'] | raw }}
+        </div>
+        <div class="stepper_content" step="2">
+            {{ q['userCreation'] | raw }}
+            <button id="userCreationSubmit" class="ui button primary">Valider</button>
+        </div>
+        <div class="stepper_content" step="3">
+        </div>
+    </div>
+    <span id="response"></span>
 </div>
-<div id="response"></div>
 {{ script_foot | raw }}
