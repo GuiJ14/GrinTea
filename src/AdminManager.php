@@ -3,6 +3,7 @@
 namespace grintea;
 
 use grintea\DOMGenerator\AdminManagerDOMLoader;
+use models\Settings;
 use Ubiquity\attributes\AttributesEngine;
 use Ubiquity\cache\traits\ModelsCacheTrait;
 use Ubiquity\cache\CacheManager;
@@ -15,9 +16,25 @@ use Ubiquity\utils\base\UFileSystem;
 class AdminManager {
 
 	public static function _initConfig(){
-		self::_createDB();
-		self::_createModels();
-		self::_createCache();
+        if(\in_array('settings',DAO::getDatabase()->getTablesName())){
+            $state = DAO::getOne(Settings::class,'type = :type',false,['type'=>'installState']);
+        }
+        if( isset($state) && (int) $state->getValue() == 2){
+            return;
+        }
+
+        if( !isset($state) ){
+            self::_createDB();
+        }
+
+        if( !isset($state) || (int) $state->getValue() == 1){
+            self::_createModels();
+            self::_createCache();
+            if(!isset($state))
+                $state = DAO::getOne(Settings::class,'type = :type',false,['type'=>'installState']);
+            $state->setValue('2');
+            DAO::save($state);
+        }
 	}
 
 	private static function getFile(string $filePath){
@@ -30,14 +47,11 @@ class AdminManager {
         $sqlFilePath = dirname(__FILE__,1). \DS. $sqlFilename . '.sql';
         $query = self::getFile($sqlFilePath);
 		try{
-			$pdo = new PDOWrapper();
-			$dsn = 'mysql:dbname='.$config['database']['dbName'].';host='.$config['database']['serverName'];
-			$dbInstance = new \PDO($dsn, $config['database']['user'], $config['database']['password']);
-			$pdo->setDbInstance($dbInstance);
-			$pdo->execute($query);
+            $dbInstance = DAO::getDatabase();
+			$dbInstance->execute($query);
 		}
 		catch (\Exception $exception){
-			return $exception;
+			throw $exception;
 		}
     }
 

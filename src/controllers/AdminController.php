@@ -5,6 +5,7 @@ namespace grintea\controllers;
 use Ajax\JsUtils;
 use Ajax\php\symfony\Jquery_;
 use Ajax\php\symfony\JquerySemantic;
+use models\Settings;
 use Ubiquity\assets\AssetsManager;
 use Ubiquity\attributes\items\di\Autowired;
 use Ubiquity\attributes\items\router\Get;
@@ -49,17 +50,9 @@ class AdminController extends ControllerBase {
     }
 
     public function index(){
+        AdminManager::_initConfig();
         $this->loader->getUILoader('Admin')->firstLaunch($this->jquery);
-        $this->jquery->renderView('@grintea/index.html');
+        $this->jquery->renderView('@grintea/admin/index');
     }
-
-    public function initConfig(){
-	    AdminManager::_initConfig();
-    }
-
-
-    public function createUser() {
-		$this->createUser($this->loader->getDAOLoader('User'));
-	}
 
 }

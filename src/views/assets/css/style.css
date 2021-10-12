@@ -1,0 +1,8 @@
+:root{
+    --color-green-main : #95E06E;
+    --color-green-secondary : #4B9423;
+    --color-red-main : #944145;
+    --color-red-secondary : #E0585F;
+    --color-blue : #4C8E0;
+}
+*{margin:0;padding:0;box-sizing: border-box;}

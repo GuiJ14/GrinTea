@@ -11,9 +11,11 @@ use Ubiquity\utils\http\URequest;
 
 trait UserTrait {
 
-	public function createUser($DAOLoader){
-		$user = new User();
-		URequest::setPostValuesToObject($user);
-		$DAOLoader->createUser($user);
+	public function createUser(){
+		if(URequest::isPost()){
+            $user = new User();
+            URequest::setPostValuesToObject($user);
+            $this->loader->getDAOLoader('User')->createUser($user);
+        }
 	}
 }

@@ -13,7 +13,7 @@ class Manager {
 	}
 
 	private function instantiateClasses($type){
-		$files = \array_diff( \scandir(dirname(__FILE__) . \DS . $type), array(".", "..",\basename(__FILE__)) );
+		$files = \array_diff( \scandir(dirname(__FILE__) . \DS . $type), array(".", "..","traits",\basename(__FILE__)) );
 		foreach ($files as $file){
 			$key = \explode($type, $file)[0];
 			$class = __NAMESPACE__ . \DS . $type . \DS . pathinfo($file, PATHINFO_FILENAME);
