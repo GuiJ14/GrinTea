@@ -2,49 +2,57 @@
 
 namespace grintea;
 
-use grintea\DOMGenerator\AdminManagerDOMLoader;
-use models\Settings;
-use Ubiquity\attributes\AttributesEngine;
-use Ubiquity\cache\traits\ModelsCacheTrait;
+use models\Setting;
+use models\User;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\controllers\Startup;
-use Ubiquity\db\providers\pdo\PDOWrapper;
 use Ubiquity\orm\creator\database\DbModelsCreator;
 use Ubiquity\orm\DAO;
-use Ubiquity\utils\base\UFileSystem;
 
 class AdminManager {
 
 	public static function _initConfig(){
-        if(\in_array('settings',DAO::getDatabase()->getTablesName())){
-            $state = DAO::getOne(Settings::class,'type = :type',false,['type'=>'installState']);
-        }
-        if( isset($state) && (int) $state->getValue() == 2){
-            return;
-        }
-
-        if( !isset($state) ){
+        CacheManager::start($config);
+        if(!self::isDBInstalled()) {
             self::_createDB();
         }
-
-        if( !isset($state) || (int) $state->getValue() == 1){
+        if(!self::areModelsGenerated()) {
             self::_createModels();
-            self::_createCache();
-            if(!isset($state))
-                $state = DAO::getOne(Settings::class,'type = :type',false,['type'=>'installState']);
-            $state->setValue('2');
-            DAO::save($state);
         }
-	}
+
+        self::_createCache();
+    }
+
+    public static function isInstalled():bool {
+        return self::isDBInstalled() && self::areModelsGenerated() && self::isAdminAccountCreated();
+    }
+
+    public static function areModelsGenerated():bool {
+        if(class_exists('models\User') && class_exists('models\Setting') && class_exists('models\Groups')){
+            return true;
+        }
+        return false;
+    }
+
+    public static function isDBInstalled():bool {
+        $dbInstance = DAO::getDatabase();
+        $dbName = Startup::getConfig()['database']['dbName'];
+        $tableList = $dbInstance->getTablesName();
+        return (0 == \count(\array_diff(['user','groups','setting'], $tableList)));
+    }
+
+    public static function isAdminAccountCreated() {
+        return \filter_var(DAO::getOne(Setting::class,'type=:type',false,['type'=>'isAdminAccountCreated']), FILTER_VALIDATE_BOOLEAN);
+    }
 
 	private static function getFile(string $filePath){
-		return trim(file_get_contents($filePath), "\xEF\xBB\xBF");
+		return \trim(\file_get_contents($filePath), "\xEF\xBB\xBF");
 	}
 
     public static function _createDB(){
         $config = Startup::getConfig();
         $sqlFilename = 'query';
-        $sqlFilePath = dirname(__FILE__,1). \DS. $sqlFilename . '.sql';
+        $sqlFilePath = \dirname(__FILE__,1). \DS. $sqlFilename . '.sql';
         $query = self::getFile($sqlFilePath);
 		try{
             $dbInstance = DAO::getDatabase();
@@ -57,8 +65,9 @@ class AdminManager {
 
     public static function _createModels(){
     	$config = Startup::getConfig();
-		CacheManager::start($config);
-		(new DbModelsCreator())->create($config, false);
+        $modelsCreator = new DbModelsCreator();
+        $modelsCreator->setSilent(true);
+		$modelsCreator->create($config, false);
 	}
 
     public static function _createCache(){

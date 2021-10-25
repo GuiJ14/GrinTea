@@ -1,8 +1,11 @@
 :root{
     --color-green-main : #95E06E;
     --color-green-secondary : #4B9423;
-    --color-red-main : #944145;
-    --color-red-secondary : #E0585F;
-    --color-blue : #4C8E0;
+    --color-grey-main : #323232;
+    --color-grey-secondary : #F4F4F4;
+    --color-grey-text : #4C8E03;
+    --color-white : #FFFFFF;
 }
 *{margin:0;padding:0;box-sizing: border-box;}
+svg{vertical-align:top;}
+input:focus{border-color:var(--color-green-secondary) !important;}

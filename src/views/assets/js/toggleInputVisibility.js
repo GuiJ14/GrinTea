@@ -1,4 +1,4 @@
-function toggleInputVisibility(button) {
+const toggleInputVisibility = (button) => {
     field = button.parentNode;
     if( field.getElementsByTagName('input')[0].type == 'text' ){
         field.getElementsByTagName('input')[0].type = 'password';

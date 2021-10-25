@@ -1,4 +1,4 @@
-function formValidation(form, validators, onSuccess = false){
+const formValidation = (form, validators, onSuccess = false) => {
     let parsedValidator = {}
     for(let validator of validators){
         const rules = [];

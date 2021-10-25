@@ -2,18 +2,14 @@
 
 namespace grintea\services\UI;
 
-use Ajax\JsUtils;
-use models\User;
-use Ubiquity\controllers\Router;
 use grintea\services\UI\traits\JSLoaderTrait;
 
 class AdminUILoader{
     use JSLoaderTrait;
 
-    public function firstLaunch( $jquery ){
-        $this->startStepper( $jquery );
+    public function installation( $jquery ){
+        $this->jsFunctions( $jquery );
         $this->toggleInputVisibility( $jquery );
-        $this->userCreationFormValidation( $jquery );
         $this->passwordGenerator( $jquery );
         $this->injectInstallJs( $jquery );
     }
