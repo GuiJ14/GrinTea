@@ -10,7 +10,3 @@ if(generateButton){
             $('input[name*="password"]').each((index,input)=> { input.value = generatedPassword;input.type = "text";} )
         });
 }
-
-const success = () => {
-
-}

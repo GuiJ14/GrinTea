@@ -15,11 +15,11 @@ trait UserTrait {
     private function checkUserValidators(User $user){
         $errors = [];
         if(!filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL))
-            $errors['email'] = 'Cette email n\'est pas valide';
+            $errors['email'] = TranslatorManager::trans('invalid_email',[],'grintea');
         if($this->loader->getDAOLoader('User')->getByEmail($user->getEmail()))
-            $errors['email'] = 'Cette email est déjà utilisé';
+            $errors['email'] = TranslatorManager::trans('alreadyInUse_email',[],'grintea');
         if($user->getPassword() == null || $user->getPassword() == "" && count($user->getPassword()) < 8)
-            $errors['password'] = 'Votre mot de passe ne respecte pas les règles';
+            $errors['password'] = TranslatorManager::trans('rules_password',[],'grintea');
         if(count($errors) !== 0)
             throw new ValidationException( $errors );
     }
@@ -44,13 +44,13 @@ trait UserTrait {
                 $this->checkUserValidators($user);
             }
             catch(\Exception $e){
-                print(\json_encode(['type'=>'error','header'=>'Erreur','message'=>$e->getMessage()],JSON_UNESCAPED_UNICODE));
+                print(\json_encode(['type'=>'error', 'header'=>TranslatorManager::trans('error',[],'grintea'), 'message'=>$e->getMessage()],JSON_UNESCAPED_UNICODE));
                 return;
             }
 
             $this->loader->getDAOLoader('User')->createUser($user);
             DAO::save($isAdminCreatedSetting);
-            print(\json_encode(['type' => 'success', 'header' => 'Succès', 'message' => 'Compte admin créé'], JSON_UNESCAPED_UNICODE));
+            print(\json_encode(['type' => 'success', 'header' => TranslatorManager::trans('success',[],'grintea'), 'message' => TranslatorManager::trans('admin_account_created',[],'grintea')], JSON_UNESCAPED_UNICODE));
         }
 	}
 }

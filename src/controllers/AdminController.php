@@ -8,6 +8,7 @@ use models\Setting;
 use Ubiquity\controllers\Startup;
 use grintea\AdminManager;
 use Ubiquity\orm\DAO;
+use Ubiquity\translation\TranslatorManager;
 
 /**
  * Controller AdminController
@@ -30,13 +31,17 @@ class AdminController extends ControllerBase {
             $jsCallback = 'ajaxCallback(data, setMessage.bind(null, document.getElementById("response"), data));';
             $this->loader->getUILoader('User')->userCreationForm($this->jquery , $jsCallback);
         }
-        $this->loader->getUILoader('Admin')->installation( $this->jquery );
-        $this->jquery->renderView('@grintea/admin/index'); //TODO change to install.html
+        $this->loader->getUILoader('Admin')->loadJS( $this->jquery, 'install', ['toggleInputVisibility', 'passwordGenerator', 'formValidation']);
+        $this->jquery->renderView('@grintea/admin/install');
     }
 
     public function index(){
         if(!AdminManager::isInstalled()){
             $this->installation();
+        }
+        else{
+            $this->loader->getUILoader('Admin')->loadJS( $this->jquery, 'index', ['menuIndicator']);
+            $this->jquery->renderView('@grintea/admin/index');
         }
     }
 

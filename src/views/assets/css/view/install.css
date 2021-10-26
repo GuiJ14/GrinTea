@@ -1,0 +1,8 @@
+.content{display:flex;margin:0 auto;flex-direction:column;position:relative;height:auto;width:80%;padding:20px;background:var(--color-white);}
+.content::after{content:"";position:absolute;left:0;bottom:0;background:var(--color-green-secondary);height:4px;width:100%;}
+
+a{cursor:pointer;color:var(--color-green-secondary);text-decoration:underline;margin:10px 0 0 0;display:block;}
+a:hover{color:var(--color-green-main);text-decoration:underline;}
+
+#response{width:80%;}
+#footer{position:absolute;bottom:0;margin:0 auto;z-index:-1;}

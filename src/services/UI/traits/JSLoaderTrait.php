@@ -4,16 +4,16 @@ namespace grintea\services\UI\traits;
 
 trait JSLoaderTrait{
 
-    private function jsFunctions( $jquery ){
-        $jquery->execJSFromFile('@grintea/assets/js/functions');
+    public function loadJS( $jquery , string $viewName, array $modules = []):void {
+        $this->injectJs( $jquery, 'functions');
+        foreach($modules as $module){
+            $this->injectJs( $jquery, $module);
+        }
+        $this->injectJs( $jquery, "view/$viewName");
     }
 
-    private function passwordGenerator ( $jquery ){
-        $jquery->execJSFromFile('@grintea/assets/js/passwordGenerator');
-    }
-
-    private function toggleInputVisibility( $jquery ){
-        $jquery->execJSFromFile('@grintea/assets/js/toggleInputVisibility');
+    private function injectJs( $jquery, $fileName ){
+        $jquery->execJSFromFile("@grintea/assets/js/$fileName");
     }
 
 }
