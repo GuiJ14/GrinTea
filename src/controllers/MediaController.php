@@ -3,9 +3,17 @@
 namespace grintea\controllers;
 
 use grintea\exceptions\ValidationException;
-use Ubiquity\controllers\Controller;
+use Ubiquity\attributes\items\acl\Allow;
+use grintea\controllers\ControllerBase;
+use Ubiquity\attributes\items\router\Route;
+use Ubiquity\security\acl\controllers\AclControllerTrait;
 
-class MediaController extends Controller {
+#[Route('media',automated:true,inherited:true)]
+class MediaController extends ControllerBase {
+    use AclControllerTrait;
+
+    #[Allow('@admin')]
+    public function index(){}
 
     public function upload() {
         $target_dir = \ROOT . \DS;

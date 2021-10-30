@@ -7,11 +7,12 @@ use models\User;
 use Ubiquity\controllers\Router;
 use grintea\services\UI\traits\FormElementsTrait;
 use Ubiquity\translation\TranslatorManager;
+use Ajax\php\ubiquity\JsUtils;
 
 class UserUILoader{
     use FormElementsTrait;
 
-    public function userCreationForm( $jquery , $jsCallback = ''){
+    public function userCreationForm( JsUtils $jquery , $jsCallback = ''){
         $userForm = $jquery->semantic()->htmlForm('userCreationForm');
         $userForm->addItem($this->iconInputField("email", "user","text",null,TranslatorManager::trans('email',[],'grintea'),[['type'=>'empty','prompt'=>TranslatorManager::trans('no_email',[],'grintea')],['type'=>'email','prompt'=>'{value} '.TranslatorManager::trans('invalid_email',[],'grintea')]]));
         $userForm->addItem($this->passwordInputField("password", TranslatorManager::trans('password',[],'grintea'), [['type'=>'empty','prompt'=>TranslatorManager::trans('no_password',[],'grintea')],['type'=>'minLength[8]','prompt'=>TranslatorManager::trans('atLeastCharacters_password',[],'grintea')]]));

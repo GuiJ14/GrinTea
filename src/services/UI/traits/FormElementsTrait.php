@@ -7,8 +7,8 @@ use Ajax\semantic\html\collections\form\HtmlFormField;
 use Ajax\semantic\html\collections\form\HtmlFormInput;
 use Ajax\semantic\html\elements\HtmlIcon;
 use Ajax\semantic\html\elements\HtmlInput;
-use grintea\services\semantic\HtmlFormContent;
-use grintea\services\semantic\HtmlFormPassword;
+use grintea\services\UI\semantic\HtmlFormContent;
+use grintea\services\UI\semantic\HtmlFormPassword;
 
 trait FormElementsTrait{
 

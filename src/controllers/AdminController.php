@@ -2,47 +2,44 @@
 
 namespace grintea\controllers;
 
-use grintea\controllers\traits\UserTrait;
-use controllers\ControllerBase;
-use models\Setting;
-use Ubiquity\controllers\Startup;
+use Ajax\php\ubiquity\JsUtils;
+use grintea\controllers\ControllerBase;
 use grintea\AdminManager;
-use Ubiquity\orm\DAO;
-use Ubiquity\translation\TranslatorManager;
+use grintea\controllers\traits\UserTrait;
+use grintea\services\Manager;
+use Ubiquity\attributes\items\di\Autowired;
+use Ubiquity\attributes\items\router\Route;
+use Ubiquity\controllers\Router;
+use Ubiquity\controllers\Startup;
+use Ubiquity\security\acl\controllers\AclControllerTrait;
+use Ubiquity\attributes\items\acl\Allow;
 
-/**
- * Controller AdminController
- */
+
+#[Route('admin',automated:true,inherited:true)]
 class AdminController extends ControllerBase {
 	use UserTrait;
 
-    protected $headerView = "@grintea/parts/header.html";
-    protected $footerView = "@grintea/parts/footer.html";
-
-	public function initialize() {
-        Startup::$templateEngine->addPath('vendor/grinto/grintea/src/views','grintea');
-        $config = Startup::getConfig();
-        parent::initialize();
-    }
-
-    private function installation(){
-        AdminManager::_initConfig();
-        if(!AdminManager::isAdminAccountCreated()) {
-            $jsCallback = 'ajaxCallback(data, setMessage.bind(null, document.getElementById("response"), data));';
-            $this->loader->getUILoader('User')->userCreationForm($this->jquery , $jsCallback);
-        }
+    private function adminAccountCreation(){
+        $jsCallback = 'ajaxCallback(data, setMessage.bind(null, document.getElementById("response"), data), redirection(data.redirect,2000));';
+        $this->loader->getUILoader('User')->userCreationForm($this->jquery , $jsCallback);
         $this->loader->getUILoader('Admin')->loadJS( $this->jquery, 'install', ['toggleInputVisibility', 'passwordGenerator', 'formValidation']);
         $this->jquery->renderView('@grintea/admin/install');
     }
 
-    public function index(){
-        if(!AdminManager::isInstalled()){
-            $this->installation();
+    public function installation(){
+        AdminManager::_initConfig();
+        $indexRoute = Router::path('admin.index');
+        if(!AdminManager::isAdminAccountCreated()){
+            $this->adminAccountCreation();
         }
         else{
-            $this->loader->getUILoader('Admin')->loadJS( $this->jquery, 'index', ['menuIndicator']);
-            $this->jquery->renderView('@grintea/admin/index');
+            header("location:$indexRoute");
         }
+    }
+
+    public function index(){
+        $this->loader->getUILoader('Admin')->loadJS( $this->jquery, 'index', ['menuIndicator']);
+        $this->jquery->renderView('@grintea/admin/index');
     }
 
 }

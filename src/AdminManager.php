@@ -3,31 +3,27 @@
 namespace grintea;
 
 use models\Setting;
-use models\User;
-use Ubiquity\cache\CacheFile;
-use Ubiquity\cache\CacheManager;
 use Ubiquity\controllers\Startup;
 use Ubiquity\orm\creator\database\DbModelsCreator;
 use Ubiquity\orm\DAO;
-use Ubiquity\translation\TranslatorManager;
 
 class AdminManager {
 
 	public static function _initConfig(){
+        $config = Startup::getConfig();
         CacheManager::start($config);
         if(!self::isDBInstalled()) {
             self::_createDB();
         }
-        if(!self::areModelsGenerated()) {
+        if(!self::areModelsGenerated()){
             self::_createModels();
         }
         self::_createTranslation();
-        self::_initTranslationsCache();
-        self::_initModelsCache();
-    }
+        CacheManager::initTranslationsCache();
+        CacheManager::initCache( $config, 'models');
+        CacheManager::initCache( $config, 'controllers');
+        CacheManager::initCache( $config, 'acls');
 
-    public static function isInstalled():bool {
-        return self::isDBInstalled() && self::areModelsGenerated() && self::isAdminAccountCreated();
     }
 
     public static function areModelsGenerated():bool {
@@ -75,37 +71,8 @@ class AdminManager {
 
     public static function _createTranslation(){
         $translationDirectory = \dirname( __FILE__) . \DS . 'translations';
-        $translationDirectoryFiles = array_diff(\scandir($translationDirectory), ['.', '..']);
         $destination = \ROOT . 'translations';
-
-        //create translation folder in app
-        if(!\is_dir($destination)){
-            \mkdir($destination);
-        }
-
-        //create locales folders in app
-        foreach($translationDirectoryFiles as $path){
-            if(!\is_dir($destination . \DS . $path)){
-                \mkdir($destination . \DS . $path);
-                $filesToCopy = array_diff(\scandir($translationDirectory . \DS . $path), ['.', '..']);
-                foreach ($filesToCopy as $file) {
-                    \copy($translationDirectory . \DS . $path . \DS . $file, $destination . \DS . $path . \DS . $file);
-                }
-            }
-        }
+        Utils::copy($translationDirectory, $destination);
     }
 
-    public static function _initTranslationsCache(){
-        CacheFile::delete(\ROOT . \DS . CacheManager::getCacheDirectory() . 'translations');
-        TranslatorManager::start();
-        $locales = TranslatorManager::getLocales();
-        foreach ($locales as $locale) {
-            TranslatorManager::getCatalogue($locale);
-        }
-    }
-
-    public static function _initModelsCache(){
-        $config = Startup::getConfig();
-        CacheManager::initModelsCache($config, false, true);
-    }
 }

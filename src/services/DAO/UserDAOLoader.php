@@ -2,11 +2,9 @@
 
 namespace grintea\services\DAO;
 
-use models\Setting;
 use models\User;
 use Ubiquity\orm\DAO;
 use Ubiquity\security\data\EncryptionManager;
-use grintea\exceptions\ValidationException;
 
 class UserDAOLoader{
 

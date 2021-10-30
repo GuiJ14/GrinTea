@@ -7,7 +7,9 @@ use grintea\AdminManager;
 use grintea\exceptions\ValidationException;
 use models\Setting;
 use models\User;
+use Ubiquity\controllers\Router;
 use Ubiquity\orm\DAO;
+use Ubiquity\translation\TranslatorManager;
 use Ubiquity\utils\http\URequest;
 
 trait UserTrait {
@@ -31,8 +33,7 @@ trait UserTrait {
 
             /* check for first user creation */
             $isAdminCreatedSetting = AdminManager::isAdminAccountCreated();
-            $isAdminCreatedUser = $this->loader->getDAOLoader('User')->getById(1);
-            if(!$isAdminCreatedSetting && !filter_var($isAdminCreatedUser, FILTER_VALIDATE_BOOLEAN)){
+            if(!$isAdminCreatedSetting){
                 $user->setGroups(1);
                 $isAdminCreatedSetting = new Setting();
                 $isAdminCreatedSetting->setType('isAdminAccountCreated');
@@ -50,7 +51,7 @@ trait UserTrait {
 
             $this->loader->getDAOLoader('User')->createUser($user);
             DAO::save($isAdminCreatedSetting);
-            print(\json_encode(['type' => 'success', 'header' => TranslatorManager::trans('success',[],'grintea'), 'message' => TranslatorManager::trans('admin_account_created',[],'grintea')], JSON_UNESCAPED_UNICODE));
+            print(\json_encode(['type' => 'success', 'header' => TranslatorManager::trans('success',[],'grintea'), 'message' => TranslatorManager::trans('admin_account_created',[],'grintea'), 'redirect'=>Router::path('admin.index')], JSON_UNESCAPED_UNICODE));
         }
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace grintea\services\semantic;
+namespace grintea\services\UI\semantic;
 
 use Ajax\semantic\html\collections\form\traits\TextFieldsTrait;
 use Ajax\semantic\html\elements\HtmlInput;

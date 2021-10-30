@@ -10,6 +10,10 @@ const clearMessage = (div) => {
     div.getElementsByClassName('response_content')[0].innerHTML = "";
 }
 
+const redirection = (url, time = 0) => {
+    setTimeout(document.location.href=url, time);
+}
+
 const ajaxCallback = (data, globalCallback, successCallback = null, errorCallback = null) => {
     globalCallback();
     if(data.type == "success" && successCallback){
